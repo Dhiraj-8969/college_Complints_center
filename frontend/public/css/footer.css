@@ -1,0 +1,30 @@
+/* Ensure the page takes full height */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Ensure root container expands fully */
+  #root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  /* Make main content grow and push the footer down */
+  main {
+    flex: 1;
+  }
+  
+  /* Footer always at the bottom */
+  footer {
+    background-color: #343a40; /* Dark background */
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    width: 100%;
+  }
+  

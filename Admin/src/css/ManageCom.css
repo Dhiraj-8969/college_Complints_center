@@ -1,0 +1,117 @@
+.manage-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem 1rem;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.manage-title {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.filter-buttons button {
+  padding: 6px 16px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filter-buttons button:hover {
+  background-color: #eee;
+}
+
+.filter-buttons .active {
+  background-color: #444;
+  color: white;
+  border-color: #444;
+}
+
+.complaint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+}
+
+.date-top-right {
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.status-select {
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.status-badge {
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 16px;
+  color: white;
+}
+
+.status-badge.bg-success {
+  background-color: #28a745;
+}
+
+.status-badge.bg-warning {
+  background-color: #ffc107;
+  color: #222;
+}
+
+.status-badge.bg-info {
+  background-color: #17a2b8;
+}
