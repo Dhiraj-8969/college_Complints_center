@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function Complaint() {
+  const {url} = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     category: "College",
@@ -48,7 +50,7 @@ function Complaint() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/complaint",
+        `${url}complaint`,
         dataToSend,  // ✅ Send only necessary fields
         {
           headers: { Authorization: `Bearer ${token}` },

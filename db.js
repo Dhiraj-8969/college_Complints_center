@@ -1,23 +1,13 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-// Use the correct database name
-const mongoURL = "mongodb://127.0.0.1:27017/report";
 
-// Function to connect to MongoD
-async function connectDB() {
-  try {
-    await mongoose.connect(mongoURL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+const connectDB= async ()=>{
+    mongoose.connection.on('connected',()=>console.log("Database Connected"))
 
-    console.log("✅ MongoDB Connected Successfully");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
-    process.exit(1); // Exit the process if connection fails
-  }
+    await mongoose.connect(process.env.DB_URL)
 }
+
 
 // Call the function to connect
 connectDB();

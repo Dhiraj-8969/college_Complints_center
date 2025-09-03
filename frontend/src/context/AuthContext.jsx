@@ -24,10 +24,10 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   // Signup
-  
+  const url='http://localhost:3000/';
 
   const signup = async (formData) => {
-    const res = await axios.post("http://localhost:3000/user/signup", formData, {
+    const res = await axios.post(`${url}user/signup`, formData, {
       withCredentials: true,
     });
     setUser(res.data.user);
@@ -37,7 +37,7 @@ const AuthProvider = ({ children }) => {
 
   // Login
   const login = async (formData) => {
-    const res = await axios.post("http://localhost:3000/user/login", formData, {
+    const res = await axios.post(`${url}user/login`, formData, {
       withCredentials: true,
     });
     if (res.data.success) {
@@ -55,7 +55,7 @@ const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signup, login, logout }}>
+    <AuthContext.Provider value={{url,user, loading, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

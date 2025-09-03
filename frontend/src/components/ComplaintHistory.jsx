@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import removeIcon from './assets/remove.png'; // Adjust if necessary
+import { AuthContext } from "../context/AuthContext";
 
 function ComplaintsHistory({ user }) {
+  const {url} = useContext(AuthContext);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,7 +22,7 @@ function ComplaintsHistory({ user }) {
           .find((row) => row.startsWith("token="))
           ?.split("=")[1];
 
-        const response = await axios.get("http://localhost:3000/user/profile", {
+        const response = await axios.get(`${url}user/profile`, {
           headers: { Authorization: `Bearer ${token}` },
           withCredentials: true,
         });
@@ -44,7 +46,7 @@ function ComplaintsHistory({ user }) {
         .find((row) => row.startsWith("token="))
         ?.split("=")[1];
 
-      await axios.delete(`http://localhost:3000/user/complaint/${id}`, {
+      await axios.delete(`${url}user/complaint/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });

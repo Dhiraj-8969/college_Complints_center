@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 function Topbar() {
-    const { user, logout } = useContext(AuthContext);
+    const {user, logout } = useContext(AuthContext);
   
     return (
       <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
