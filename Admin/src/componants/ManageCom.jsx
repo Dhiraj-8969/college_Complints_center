@@ -28,7 +28,7 @@ function ManageCom() {
     if (!token) return;
 
     axios
-      .get("http://localhost:3000/admin", {
+      .get("https://college-complints-backend.onrender.com/admin", {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       })
@@ -44,7 +44,7 @@ function ManageCom() {
     const feedback = feedbackInputs[complaintId] || "";
 
     axios
-      .put(`http://localhost:3000/admin/complaints/${complaintId}`, {
+      .put(`https://college-complints-backend.onrender.com/admin/complaints/${complaintId}`, {
         updateStatus: newStatus,
         feedback,
       }, {

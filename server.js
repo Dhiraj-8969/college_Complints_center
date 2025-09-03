@@ -9,7 +9,7 @@ const app = express();
 // ✅ Allow CORS with Credentials before routes
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"], // Allow both origins
+    origin: ["https://college-complaints-frontend.onrender.com", "https://college-complaints-admin.onrender.com"], // Allow both origins
     credentials: true, // Allow cookies
   })
 );

@@ -16,7 +16,7 @@ function ForUser() {
     setMessage('');
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(`http://localhost:3000/admin/user/${rollNo}`, {
+      const response = await axios.get(`https://college-complints-backend.onrender.com/admin/user/${rollNo}`, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
@@ -37,7 +37,7 @@ function ForUser() {
 
     try {
       const response = await axios.put(
-        'http://localhost:3000/admin/password',
+        'https://college-complints-backend.onrender.com/admin/password',
         { rollNo, newPassword },
         {
           headers: {

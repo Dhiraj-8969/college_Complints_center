@@ -29,7 +29,7 @@ const AdminSignup = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post('http://localhost:3000/admin/signup', formData, {
+      const res = await axios.post('https://college-complints-backend.onrender.com/admin/signup', formData, {
         withCredentials: true,
       });
       setMessage(res.data.message);

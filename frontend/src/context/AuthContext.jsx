@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   // Signup
-  const url='http://localhost:3000/';
+  const url='https://college-complints-backend.onrender.com/';
 
   const signup = async (formData) => {
     const res = await axios.post(`${url}user/signup`, formData, {
