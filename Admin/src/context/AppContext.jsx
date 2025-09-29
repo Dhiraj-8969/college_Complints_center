@@ -11,7 +11,7 @@ const AppProvider = ({ children }) => {
   const [complaints, setComplaints] = useState([]);
   const navigate = useNavigate();
 
-  const url = 'http://localhost:3000/';
+  const url = 'https://college-complints-backend.onrender.com/';
 
   const fetchComplaints = async () => {
     try {

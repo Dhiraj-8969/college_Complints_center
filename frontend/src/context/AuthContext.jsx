@@ -11,7 +11,7 @@ const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const navigate = useNavigate();
 
-  const url = 'http://localhost:3000/';
+  const url = 'https://college-complints-backend.onrender.com/';
 
 
   const signup = async (formData) => {
