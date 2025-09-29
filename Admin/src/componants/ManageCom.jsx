@@ -2,73 +2,53 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from 'date-fns';
 import axios from "axios";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
 
 function ManageCom() {
+  const { complaints, url, token } = useContext(AppContext);
   const [allComplaints, setAllComplaints] = useState([]);
-  const [token, setToken] = useState("");
   const [filter, setFilter] = useState("All");
   const [feedbackInputs, setFeedbackInputs] = useState({});
 
   const navigate = useNavigate();
-
   useEffect(() => {
-    const storedToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
-      navigate("/admin-login");
+    if (!token) {
+      navigate("/login");
     }
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!token) return;
-
-    axios
-      .get("https://college-complints-backend.onrender.com/admin", {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      })
-      .then((res) => {
-        setAllComplaints(res.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching complaints:", error);
-      });
   }, [token]);
+  useEffect(() => {
+    setAllComplaints(complaints);
+  }, [complaints]);
 
-  const handleStatusChange = (complaintId, newStatus) => {
+  const handleStatusChange = async (complaintId, newStatus) => {
     const feedback = feedbackInputs[complaintId] || "";
-
-    axios
-      .put(`https://college-complints-backend.onrender.com/admin/complaints/${complaintId}`, {
+    try {
+      const response = await axios.put(`${url}admin/complaints/${complaintId}`, {
         updateStatus: newStatus,
         feedback,
       }, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        console.log("Status updated:", res.data);
-
-        // Update complaints locally
-        setAllComplaints((prev) =>
+        headers: {token: token},
+      });
+      if(response.data.success) {
+        toast.success("Complaint updated successfully");
+        console.log("Update successful:", response.data);
+      }  // Update complaints locally
+      setAllComplaints((prev) =>
           prev.map((c) =>
             c._id === complaintId ? { ...c, status: newStatus, feedback } : c
           )
         );
-
         // ✅ Clear textarea after successful update
         setFeedbackInputs((prevInputs) => ({
           ...prevInputs,
           [complaintId]: "",
         }));
-      })
-      .catch((err) => {
-        console.error("Error updating:", err);
-      });
+      } catch (error) {
+          toast.error(error.message);
+          console.error(error);
+      }
   };
 
 

@@ -1,69 +1,38 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import removeIcon from './assets/remove.png'; // Adjust if necessary
+import removeIcon from './assets/remove.png'; 
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
-function ComplaintsHistory({ user }) {
-  const {url} = useContext(AuthContext);
-  const [complaints, setComplaints] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+function ComplaintsHistory() {
+  const { token, url, userData } = useContext(AuthContext);
+  const [complaints, setComplaints] = useState(userData.complaints)
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+
   function capitalizeWords(sentence) {
     return sentence.toLowerCase().split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
   }
-  useEffect(() => {
-    if (!user) return;
 
-    const fetchComplaints = async () => {
-      try {
-        const token = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("token="))
-          ?.split("=")[1];
-
-        const response = await axios.get(`${url}user/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        setComplaints(response.data.complaints);
-      } catch (err) {
-        setError("Failed to load complaints.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchComplaints();
-  }, [user]);
 
   const handleDeleteComplaint = async (id) => {
     if (!window.confirm("Are you sure you want to delete this complaint?")) return;
-
     try {
-      const token = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("token="))
-        ?.split("=")[1];
-
-      await axios.delete(`${url}user/complaint/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-
-      setComplaints((prev) => prev.filter((c) => c._id !== id));
-    } catch (err) {
-      alert("Failed to delete complaint.");
-      console.error(err);
+      const { data } = await axios.delete(`${url}user/complaint/${id}`, { headers: { token: token } });
+      if (data.success) {
+        toast.success(data.message)
+        setComplaints((prev) => prev.filter((c) => c._id !== id));
+      }else{
+        toast.message(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
     }
   };
 
   const handleToggleFeedback = (complaintId) => {
     setSelectedComplaint(prev => (prev === complaintId ? null : complaintId));
   };
-
-  if (loading) return <p className="text-muted text-center mt-3">Loading...</p>;
-  if (error) return <p className="text-danger text-center mt-3">{error}</p>;
 
   return (
     <div className="container mt-5">

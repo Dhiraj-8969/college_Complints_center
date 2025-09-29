@@ -3,70 +3,82 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export const AuthContext = createContext();
+export const AppContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const AppProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : false);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [complaints, setComplaints] = useState([]);
   const navigate = useNavigate();
 
   const url = 'http://localhost:3000/';
 
+  const fetchComplaints = async () => {
+    try {
+      const { data } = await axios.get(`${url}admin`, {
+        headers: { token: token }
+      });
+      if (data.success) {
+        setComplaints(data.data);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
+    }
+  };
 
   const signup = async (formData) => {
     try {
-      const {data} = await axios.post(`${url}user/signup`, formData);
-      console.log(data);
-    if (data.success) {
-        localStorage.setItem('token',data.token)
-        setToken(data.token)
-        toast.success(data.message)
-      }else{
-        toast.error(data.message || "Failed to fetch data");
-      }
-  } catch (error) {
-      toast.error(error.message);
-      console.error(error);
-  }
-};
-
-  // Login
-  const login = async (formData) => {
-    try {
-      const {data} = await axios.post(`${url}user/login`, formData);
-      console.log(data);
+      const { data } = await axios.post(`${url}admin/signup`, formData);
       if (data.success) {
-        localStorage.setItem('token',data.token)
+        localStorage.setItem('token', data.token)
         setToken(data.token)
         toast.success(data.message)
-      }else{
+      } else {
         toast.error(data.message || "Failed to fetch data");
       }
     } catch (error) {
       toast.error(error.message);
       console.error(error);
-  } 
-};
-  // Logout
+    }
+  };
+
+
+  const login = async (formData) => {
+    try {
+      const { data } = await axios.post(`${url}admin/login`, formData);
+      if (data.success) {
+        localStorage.setItem('token', data.token)
+        setToken(data.token)
+        toast.success(data.message)
+      } else {
+        toast.error(data.message || "Failed to fetch data");
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
+    }
+  };
+
   const logout = () => {
     setToken(false);
     localStorage.removeItem("token");
     toast.success("User logged out successfully");
-    navigate("/login");
+    navigate("/admin-login");
   };
 
-useEffect(() => {
+  useEffect(() => {
     if (token) {
       navigate("/");
+      fetchComplaints();
     }
- }, [token]);
+  }, [token]);
 
   return (
-    <AuthContext.Provider value={{url, token, loading, signup, login, logout, userData, setUserData }}>
+    <AppContext.Provider value={{ url, token, loading, signup, login, logout, complaints, setComplaints}}>
       {children}
-    </AuthContext.Provider>
+    </AppContext.Provider>
   );
 };
 
-export default AuthProvider;
+export default AppProvider;

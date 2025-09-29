@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function LandingPage() {
-  const { user } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleComplaintClick = () => {
-    if (!user) {
+    if (!token) {
       navigate("/login");
     } else {
       navigate("/complaint?category=College");

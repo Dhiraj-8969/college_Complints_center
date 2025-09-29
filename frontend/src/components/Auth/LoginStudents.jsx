@@ -3,10 +3,10 @@ import { AuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Login.css"
 
-function LoginStudents() {
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
 
+function LoginStudents() {
+  const { login, token } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
     CLG_RollNo: "",
@@ -20,19 +20,9 @@ function LoginStudents() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("Logging in...");
-
-    try {
-      const data = await login(formData);
-
-      if (data.success) {
-        setMessage("✅ Login successful! Redirecting...");
-        setTimeout(() => navigate("/"), 1500);
-      } else {
-        setMessage("❌ Login failed: " + data.message);
-      }
-    } catch (error) {
-      console.error("Login Error:", error);
-      setMessage("❌ Login failed. Please check your credentials.");
+    await login(formData);
+    if (token) {
+      setTimeout(() => navigate("/"), 1500);
     }
   };
 
@@ -59,7 +49,7 @@ function LoginStudents() {
             required
             autoComplete="username"
             suggestions="off"
-            />
+          />
           <input
             type="password"
             name="password"
@@ -74,7 +64,7 @@ function LoginStudents() {
 
         <div className="login-footer">
           <p>Don't have an account? <Link to={"/signup"}>Signup</Link></p>
-          
+
         </div>
       </div>
     </div>

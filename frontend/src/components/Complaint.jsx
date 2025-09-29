@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Complaint() {
-  const {url} = useContext(AuthContext);
+  const { url, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     category: "College",
@@ -16,32 +16,12 @@ function Complaint() {
     description: "",
   });
 
-  const [message, setMessage] = useState("");
-  const [token, setToken] = useState("");
-
-  useEffect(() => {
-    // Retrieve JWT token from cookies or local storage
-    const storedToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-
-    if (storedToken) {
-      setToken(storedToken);
-    } else {
-      setMessage("You need to log in first.");
-    }
-  }, []);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-
-    // ✅ Prevent empty values from being sent
     const dataToSend = { ...formData };
     if (dataToSend.category !== "Hostel") {
       delete dataToSend.hostelName; // Remove hostelName if not needed
@@ -49,30 +29,26 @@ function Complaint() {
     }
 
     try {
-      const response = await axios.post(
-        `${url}complaint`,
-        dataToSend,  // ✅ Send only necessary fields
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
-
-      setMessage("Complaint submitted successfully!");
-      setFormData({
-        category: "College",
-        hostelName: "",
-        roomNo: "",
-        Branch: "",
-        description: "",
-      });
-
-      setTimeout(() => {
-        navigate("/")
-      }, 2000); // Optional: Clear message after 2 seconds
+      const response = await axios.post(`${url}complaint`, dataToSend, { headers: { token: token } });
+      console.log("Response:", response);
+      if (response.data.success) {
+        toast.success("Complaint submitted successfully!");
+        setFormData({
+          category: "College",
+          hostelName: "",
+          roomNo: "",
+          Branch: "",
+          description: "",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
+      }else{
+        toast.error(response.data.message || "Failed to submit complaint");
+      }
     } catch (error) {
-      setMessage("Error submitting complaint. Please try again.");
-      console.error("Submission Error:", error);
+      toast.error(error.message);
+      console.error(error);
     }
   };
 
@@ -81,9 +57,6 @@ function Complaint() {
     <div className="container mt-5">
       <div className="card shadow p-4">
         <h2 className="text-center text-dark">Submit a Complaint</h2>
-
-        {message && <p className="text-center text-danger">{message}</p>}
-
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">Category</label>
@@ -149,7 +122,7 @@ function Complaint() {
           </div>
 
           <div className="text-center d-flex justify-content-center gap-3">
-            <Link to="/" className="btn btn-outline-dark">Back to Home </Link>
+            <NavLink to="/" className="btn btn-outline-dark">Back to Home </NavLink>
             <button type="submit" className="btn btn-outline-dark">Submit Complaint</button>
 
           </div>

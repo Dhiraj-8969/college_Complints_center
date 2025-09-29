@@ -1,61 +1,53 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import '../css/ForUser.css';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
+import { toast } from "react-toastify";
 
 function ForUser() {
+  const { url, token } = useContext(AppContext);
   const [rollNo, setRollNo] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userData, setUserData] = useState(null);
-  const [message, setMessage] = useState('');
 
   const navigate = useNavigate();
 
   const handleSearch = async () => {
-    setMessage('');
-    const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(`https://college-complints-backend.onrender.com/admin/user/${rollNo}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
+      const {data} = await axios.get(`${url}admin/user/${rollNo}`, {
+        headers: {token: token},
       });
-      setUserData(response.data);
-      setMessage('User found. You can now update the password.');
+      if (data.success) {
+        setUserData(data.data);
+        toast.success('User found. You can now update the password.');
+      } else {
+        setUserData(null);
+        toast.info(data.message || 'User not found.');
+      }
     } catch (error) {
       setUserData(null);
-      setMessage(error.response?.data?.message || 'User not found.');
+      toast.error( 'User not found.');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userData) return setMessage('Search for a valid user first.');
-    if (newPassword !== confirmPassword) return setMessage('Passwords do not match.');
-
-    const token = localStorage.getItem('token');
-
+    if (newPassword !== confirmPassword) return toast.error('Passwords do not match.');
     try {
-      const response = await axios.put(
-        'https://college-complints-backend.onrender.com/admin/password',
-        { rollNo, newPassword },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
-      setMessage(response.data.message || 'Password updated successfully.');
+      const response = await axios.put(`${url}admin/password`,{ rollNo, newPassword },{headers: {token: token}});
+      if(response.data.success){
+      toast.success(response.data.message);
       setNewPassword('');
       setConfirmPassword('');
-
+    }
       setTimeout(() => {
-        setMessage('');
         navigate("/");
       }, 3000);
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error updating password.');
+      toast.error(error.message || 'Error updating password.');
     }
   };
 
@@ -63,12 +55,6 @@ function ForUser() {
     <div className="foruser-container">
       <div className="foruser-card">
         <h4 className="foruser-title">Update Password</h4>
-
-        {message && (
-          <div className={`foruser-alert ${message.toLowerCase().includes('updated') || message.toLowerCase().includes('found') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
 
         <div className="form-group">
           <label>Roll Number</label>

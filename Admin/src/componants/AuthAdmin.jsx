@@ -1,41 +1,27 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import '../css/AuthAdmin.css'; // Custom styles
+import '../css/AuthAdmin.css';
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
 function AuthAdmin() {
-  const [message, setMessage] = useState("");
+  const { token, login } = useContext(AppContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("Logging in...");
-
-    try {
-      const response = await axios.post(
-        "https://college-complints-backend.onrender.com/admin/login",
-        formData,
-        { withCredentials: true }
-      );
-
-      if (response.status === 200) {
-        setMessage("✅ Login successful! Redirecting...");
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 2000);
-      } else {
-        setMessage("❌ Login failed: " + response.data.message);
-      }
-    } catch (error) {
-      console.error("Login Error:", error.response?.data || error);
-      setMessage("❌ Login failed. Please check your credentials.");
+    await login(formData);
+    if (token) {
+      setTimeout(() => navigate('/'), 1500);
     }
   };
 
@@ -50,12 +36,6 @@ function AuthAdmin() {
           />
           <h3 className="text-primary my-2">Login</h3>
         </div>
-
-        {message && (
-          <div className={`alert ${message.includes("✅") ? "alert-info" : "alert-danger"} text-center`}>
-            {message}
-          </div>
-        )}
 
         <form className='mx-auto' onSubmit={handleSubmit}>
           <div className="mb-3">
